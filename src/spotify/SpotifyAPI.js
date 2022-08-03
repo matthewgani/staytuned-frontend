@@ -34,7 +34,7 @@ const getAccessToken = async () => {
 
 // uses access token in above function to fetch from now playing endpoint
 // with authorization headers
-export const getNowPlaying = async (client_id, client_secret, refresh_token) => {
+const getNowPlaying = async (client_id, client_secret, refresh_token) => {
   const { access_token } = await getAccessToken(
       client_id,
       client_secret,
@@ -52,25 +52,19 @@ export const getNowPlaying = async (client_id, client_secret, refresh_token) => 
 };
 
 
-export default async function getNowPlayingItem(
-  client_id,
-  client_secret,
-  refresh_token
-) {
+const getNowPlayingItem = async (client_id, client_secret,refresh_token) => {
   const response = await getNowPlaying(client_id, client_secret, refresh_token);
   if (response.status === 204 || response.status > 400) {
       return false;
   }
-  // console.log(response)
+
   const song = response.data
-  // console.log(song)
   const albumImageUrl = song.item.album.images[0].url;
   const artist = song.item.artists.map((_artist) => _artist.name).join(", ");
   const isPlaying = song.is_playing;
   const songUrl = song.item.external_urls.spotify;
   const title = song.item.name;
   
-  // console.log(song, artist)
   return {
       albumImageUrl,
       artist,
@@ -79,3 +73,8 @@ export default async function getNowPlayingItem(
       title,
   };
 }
+
+const SpotifyAPI = {
+  getNowPlayingItem
+}
+export default SpotifyAPI

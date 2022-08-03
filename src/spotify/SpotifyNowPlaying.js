@@ -1,29 +1,40 @@
 import { useEffect, useState } from "react";
-import getNowPlayingItem from "./SpotifyAPI";
+import SpotifyAPI from "./SpotifyAPI";
 import SpotifyLogo from "./SpotifyLogo";
 
 const SpotifyNowPlaying = (props) => {
     const [loading, setLoading] = useState(true);
     const [result, setResult] = useState({});
-    useEffect(() => {
-        Promise.all([
-            getNowPlayingItem(
-                props.client_id,
-                props.client_secret,
-                props.refresh_token
-            ),
-        ]).then((results) => {
-            // console.log(results)
-            setResult(results[0]);
-            setLoading(false);
-        });
-    });
-    // console.log(!loading)
+    // useEffect(() => {
 
-    // console.log(result.isPlaying)
-    // console.log(loading)
-    if ((typeof(result) === 'undefined') || (!loading && !result['isPlaying'])){
-      // console.log('e')
+    //     Promise.all([
+    //         getNowPlayingItem(
+    //             props.client_id,
+    //             props.client_secret,
+    //             props.refresh_token
+    //         ),
+    //     ]).then((results) => {
+    //         setResult(results[0]);
+    //         setLoading(false);
+    //     });
+    // });
+
+    useEffect(() => {
+      SpotifyAPI.getNowPlayingItem()
+        .then((results) => { 
+          setResult(results)
+          setLoading(false)
+        })
+    })
+    
+    if (loading) {
+      return (
+        <div>
+          <p>Connecting to spotify...</p>
+        </div>
+      )
+    }
+    else if (!loading && !result.isPlaying){
       return (
         <div>
           <SpotifyLogo />
@@ -31,8 +42,7 @@ const SpotifyNowPlaying = (props) => {
         </div>
       )
     }
-
-    if(!loading && result['isPlaying']) {
+    else if(!loading && result.isPlaying) {
       return (
       <div>
         <div>
