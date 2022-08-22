@@ -17,6 +17,8 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [notificationStatus, setNotificationStatus] = useState(null)
+  const [spotifyLoggedIn, setSpotifyLoggedIn] = useState(false)
+  
   const navigate = useNavigate()
 
   const handleNotification = (message, status) => {
@@ -78,6 +80,7 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem('loggedStayTunedUser')
     window.sessionStorage.removeItem('loggedStayTunedUser')
+    window.localStorage.clear()
     setUser(null)
     navigate('/login')
   }
