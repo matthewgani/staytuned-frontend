@@ -26,7 +26,7 @@ const updateLikes = async newObject => {
   return response.data
 }
 
-const deleteBlog = async (id) => {
+const deleteComment = async (id) => {
   const config = {
     headers: { Authorization: token },
   }
@@ -34,6 +34,13 @@ const deleteBlog = async (id) => {
   return response.data
 }
 
+const commentService = {
+  getAll,
+  create,
+  setToken,
+  updateLikes,
+  deleteComment
+};
 
 
-export default { getAll, create, setToken, updateLikes, deleteBlog }
+export default commentService

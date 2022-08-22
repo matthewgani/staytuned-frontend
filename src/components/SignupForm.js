@@ -13,8 +13,9 @@ import {
   Text,
   useColorModeValue,
   Link,
+  FormHelperText,
 } from '@chakra-ui/react';
-import { Link as ReachLink } from 'react-router-dom'
+import { Link as ReachLink, useNavigate } from 'react-router-dom'
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import userService from '../services/users'
@@ -24,6 +25,7 @@ const SignupForm = ( { handleNotification } ) => {
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate()
 
   const submitCreateAccount = async (event) => {
     event.preventDefault()
@@ -32,23 +34,32 @@ const SignupForm = ( { handleNotification } ) => {
       name: name,
       password: password
     }
-    // console.log(userObject)
 
-    // if any checks fail, backend will return error
-    // eg too short username/password or empty fields
-    try {
-      await userService.createAccount(userObject)
-    } catch (exception) {
-      handleNotification(exception.response.data.error, 'error')
-      return
+    if (!username||!password||!name) {
+      handleNotification('all fields must be filled!', 'error')
     }
+    else if (username.length < 3 || password.length < 3) {
+      handleNotification('username and password has to be at least 3 characters long!','error')
+    }
+    else if (username.includes(' ') || password.includes(' ')) {
+      handleNotification('username and password may not include spaces!','error')
+    }
+    else {
+      try {
+        await userService.createAccount(userObject)
+      } catch (exception) {
+        handleNotification(exception.response.data.error, 'error')
+        return
+      }
+  
+      handleNotification('successfully created account!', 'success')
+      setUsername('')
+      setName('')
+      setPassword('')
+      navigate('/login')
+      // route to login page after successful creation
 
-    handleNotification('successfully created account!', 'success')
-    setUsername('')
-    setName('')
-    setPassword('')
-
-    // route to login page after successful creation
+    }
   }
 
 
@@ -83,8 +94,8 @@ const SignupForm = ( { handleNotification } ) => {
                     name="Username"
                     onChange={({ target }) => setUsername(target.value)}
                     id='username'
-                    placeholder='>3 characters and no spaces'
                   />
+                  <FormHelperText>More than 3 characters and no spaces</FormHelperText>
                 </FormControl>
               </Box>
               <FormControl id="Name" isRequired>
@@ -106,7 +117,6 @@ const SignupForm = ( { handleNotification } ) => {
                     name="password"
                     onChange={({ target }) => setPassword(target.value)}
                     id='password' 
-                    placeholder='>3 characters and no spaces'
                   />
                   <InputRightElement h={'full'}>
                     <Button
@@ -118,6 +128,7 @@ const SignupForm = ( { handleNotification } ) => {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
+                <FormHelperText>More than 3 characters and no spaces</FormHelperText>
               </FormControl>
               <Stack spacing={10} pt={2}>
                 <Button

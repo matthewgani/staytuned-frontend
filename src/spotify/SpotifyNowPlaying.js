@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import SpotifyAPI from "./SpotifyAPI";
 import SpotifyLogo from "./SpotifyLogo";
 
-const SpotifyNowPlaying = () => {
+const SpotifyNowPlaying = ({ user }) => {
     const [loading, setLoading] = useState(true);
     const [result, setResult] = useState({});
 
@@ -16,6 +16,7 @@ const SpotifyNowPlaying = () => {
 
     return (
         <div>
+            {`Welcome ${user.name}!`}
             {loading && <p>Connecting to spotify...</p>}
             {(!loading && !result.isPlaying) && (
                 <div>

@@ -10,10 +10,51 @@ import {
   Stack,
   Image,
 } from '@chakra-ui/react';
-import { Link as ReachLink } from 'react-router-dom'
+import { useEffect, useState } from 'react';
+import { Link as ReachLink, useNavigate } from 'react-router-dom'
 
-const LoginForm = () => {
+const LoginForm = ({handleNotification, handleLogin}) => {
 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [rememberMe, setRememberMe] = useState(false)
+  const navigate = useNavigate()
+
+  const submitLogin = async (event) => {
+    event.preventDefault()
+    const userObject = {
+      username: username,
+      password: password
+    }
+
+
+
+    if (!username||!password) {
+      handleNotification('all fields must be filled!', 'error')
+    }
+    else if (username.length < 3 || password.length < 3) {
+      handleNotification('username and password has to be at least 3 characters long!','error')
+    }
+    else if (username.includes(' ') || password.includes(' ')) {
+      handleNotification('username and password may not include spaces!','error')
+    }
+    else {
+      const success =  await handleLogin(userObject, rememberMe)
+      if (success) {
+        handleNotification('successfully logged in!', 'success')
+        setUsername('')
+        setPassword('')
+        // route to home page after successful login
+        navigate('/home')
+      }
+
+    }
+  }
+
+  const toggleRememberMe = () => {
+    const temp = !rememberMe
+    setRememberMe(temp)
+  }
 
   return (
     <Stack minH={'100vh'} direction={{ base: 'column', md: 'row' }}>
@@ -21,22 +62,37 @@ const LoginForm = () => {
         <Stack spacing={4} w={'full'} maxW={'md'}>
           <Heading fontSize={'2xl'}>Log in to your StayTuned account</Heading>
           <FormControl id="Username">
-            <FormLabel>Email address</FormLabel>
-            <Input type="email" />
+            <FormLabel>Username</FormLabel>
+            <Input 
+              type="text"
+              value={username}
+              name="Username"
+              onChange={({ target }) => setUsername(target.value)}
+              id='username'
+            />
           </FormControl>
           <FormControl id="Password">
             <FormLabel>Password</FormLabel>
-            <Input type="password" />
+            <Input 
+              type="password" 
+              value={password}
+              name="password"
+              onChange={({ target }) => setPassword(target.value)}
+              id='password' 
+            />
           </FormControl>
           <Stack spacing={6}>
             <Stack
               direction={{ base: 'column', sm: 'row' }}
               align={'start'}
               justify={'space-between'}>
-              <Checkbox>Remember me</Checkbox>
+              <Checkbox onChange= {toggleRememberMe}>Remember me</Checkbox>
               <Link as={ReachLink} to='/signup' color={'blue.500'}>Don't have an account?</Link>
             </Stack>
-            <Button colorScheme={'blue'} variant={'solid'}>
+            <Button 
+              onClick={submitLogin}
+              colorScheme={'blue'} 
+              variant={'solid'}>
               Sign in
             </Button>
           </Stack>
