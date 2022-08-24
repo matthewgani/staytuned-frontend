@@ -1,7 +1,8 @@
 
 import { Text, Button } from "@chakra-ui/react";
-import { useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // Request User Authorization
 //https://accounts.spotify.com/authorize?client_id=bec5e86c0c3c4e31ae344c6e10e50a03&response_type=code&redirect_uri=http
@@ -31,11 +32,13 @@ import { useNavigate } from "react-router-dom";
 // need to think how to handle error 404 or error 400s if it happens halfway throughout the flow
 // redirect back to url??
 
-const SpotifyAuthFlow = ({handleNotification, user}) => {
+const SpotifyAuthFlow = ({handleNotification, handleRefreshToken}) => {
   const navigate = useNavigate()
+  const [code, setCode] = useState(null)
+
 
   // const client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
-  // const client_secret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
+  const CLIENT_SECRET = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
   const CLIENT_ID = 'bec5e86c0c3c4e31ae344c6e10e50a03'; // insert your client id here from spotify
   const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
   const REDIRECT_URL_AFTER_LOGIN = "http://localhost:3000/";
@@ -49,6 +52,31 @@ const SpotifyAuthFlow = ({handleNotification, user}) => {
   const SCOPES_URL_PARAM = SCOPES.join(SPACE_DELIMITER);
 
   const SPOTIFY_TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token'
+
+
+  const getRefreshToken = async (code) => {
+    const basic = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64");
+    
+    // header parameter
+    const config = {
+      headers: {
+        Authorization: `Basic ${basic}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      }
+    }
+    
+    // request body parameter
+    // redirect uri is just for validation, wont be redirected
+    const data = new URLSearchParams([
+      ['grant_type', 'authorization_code'],
+      ['code',code],
+      ['redirect_uri', REDIRECT_URL_AFTER_LOGIN]
+    ]).toString()
+
+    const response = await axios.post(SPOTIFY_TOKEN_ENDPOINT, data, config)
+    console.log(response.data)
+    handleRefreshToken(response.data)
+  }
 
   useEffect(() => {
     // if the user already has a refresh token (maybe stored from jwt?)
@@ -66,11 +94,12 @@ const SpotifyAuthFlow = ({handleNotification, user}) => {
         navigate('/spotifyAuth')
       }
       else {
-        const b64code = Buffer.from(code).toString('base64');
-        window.localStorage.setItem('b64code', b64code)
+        setCode(code)
+        // window.localStorage.setItem('code', code)
         // used for requesting access token for first time to get refresh token
         // maybe i usestate for this code.
         // or just start the next function to get the refresh token
+
       }
     }
 
@@ -78,6 +107,9 @@ const SpotifyAuthFlow = ({handleNotification, user}) => {
 
 
   }, [handleNotification, navigate])
+
+
+
 
 
   const handleSpotifyLogin = () => {
@@ -90,9 +122,11 @@ const SpotifyAuthFlow = ({handleNotification, user}) => {
       <Text>
         To use StayTuned, you need to login to your spotify account!
       </Text>
-      <Button onClick={handleSpotifyLogin}>
-        Login to your spotify account!
-      </Button>
+      {code 
+      ? <Button onClick={getRefreshToken}>Get refresh token!</Button>
+      :<Button onClick={handleSpotifyLogin}> Login to your spotify account!</Button>
+      }
+
 
     </div>
   )

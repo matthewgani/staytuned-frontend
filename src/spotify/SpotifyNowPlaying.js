@@ -1,17 +1,23 @@
 import { useEffect, useState } from "react";
-import SpotifyAPI from "./SpotifyAPI";
+import spotifyService from "../services/spotify";
 import SpotifyLogo from "./SpotifyLogo";
 
-const SpotifyNowPlaying = ({ user }) => {
+const SpotifyNowPlaying = ({ handleNotification, user }) => {
     const [loading, setLoading] = useState(true);
     const [result, setResult] = useState({});
 
     useEffect(() => {
-      SpotifyAPI.getNowPlayingItem()
-        .then((results) => { 
-          setResult(results)
-          setLoading(false)
-        })
+        try {
+            spotifyService.getNowPlayingItem()
+            .then((results) => { 
+                setResult(results)
+                setLoading(false)
+            })
+        }
+        catch (exception) {
+            console.log(exception)
+            handleNotification(exception.response.data.error, 'error')
+        }
     })
 
     return (

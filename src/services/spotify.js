@@ -8,8 +8,13 @@ const NOW_PLAYING_ENDPOINT = 'https://api.spotify.com/v1/me/player/currently-pla
 
 const client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const client_secret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
-const refresh_token = process.env.REACT_APP_SPOTIFY_REFRESH_TOKEN;
 
+
+let refresh_token = null
+
+const setRefreshToken = newToken => {
+  refresh_token = newToken
+}
 
 const getAccessToken = async () => {
     const basic = Buffer.from(`${client_id}:${client_secret}`).toString("base64");
@@ -35,6 +40,9 @@ const getAccessToken = async () => {
 // uses access token in above function to fetch from now playing endpoint
 // with authorization headers
 const getNowPlaying = async (client_id, client_secret, refresh_token) => {
+  // can check time left on access token. if close to running out/ran out,
+  // we call get access token. prob check time by access_token_expiry + current time.
+
   const { access_token } = await getAccessToken(
       client_id,
       client_secret,
@@ -74,7 +82,8 @@ const getNowPlayingItem = async (client_id, client_secret,refresh_token) => {
   };
 }
 
-const SpotifyAPI = {
-  getNowPlayingItem
+const spotifyService = {
+  getNowPlayingItem,
+  setRefreshToken
 }
-export default SpotifyAPI
+export default spotifyService
