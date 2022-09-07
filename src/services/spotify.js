@@ -1,4 +1,3 @@
-// import querystring from "querystring";
 import axios from "axios"
 import {Buffer} from "buffer";
 
@@ -14,6 +13,10 @@ let refresh_token = null
 
 const setRefreshToken = newToken => {
   refresh_token = newToken
+}
+
+const getRefreshToken = () => {
+  return refresh_token
 }
 
 const getAccessToken = async () => {
@@ -84,6 +87,7 @@ const getNowPlayingItem = async (client_id, client_secret,refresh_token) => {
 
 const spotifyService = {
   getNowPlayingItem,
-  setRefreshToken
+  setRefreshToken,
+  getRefreshToken
 }
 export default spotifyService

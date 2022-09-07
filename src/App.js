@@ -16,10 +16,13 @@ import spotifyService from './services/spotify'
 import SpotifyAuthFlow from './components/SpotifyAuthFlow'
 
 const App = () => {
+
+  // const isLoggedIn = window.localStorage.getItem('loggedStayTunedUser') !== null;
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [notificationStatus, setNotificationStatus] = useState(null)
   const [spotifyLoggedIn, setSpotifyLoggedIn] = useState(false)
+  const [refreshToken, setRefreshToken] = useState(null)
   
   const navigate = useNavigate()
 
@@ -96,22 +99,27 @@ const App = () => {
     window.sessionStorage.removeItem('loggedStayTunedUser')
     window.localStorage.clear()
     setUser(null)
+    setRefreshToken(null)
+    setSpotifyLoggedIn(false)
     navigate('/login')
   }
 
   const handleRefreshToken = (data) => {
-    console.log(data)
     setSpotifyLoggedIn(true)
+    setRefreshToken(data.refresh_token)
 
     // save refresh token into DB
     // userService.updateRefreshToken(user.id, data.refresh_token)
 
     // save refreshtoken into spotify service to use to get current song
-    // spotifyService.setRefreshToken(data.refresh_token)
-
+    spotifyService.setRefreshToken(data.refresh_token)
   }
 
   // needs default route like path='*' to send to 404 page or redirect to home
+  console.log(user)
+  // console.log(isLoggedIn)
+  // console.log(spotifyLoggedIn)
+  // console.log((user && spotifyLoggedIn))
 
   return (
     <ChakraProvider theme={theme}>
@@ -125,11 +133,9 @@ const App = () => {
         }
       </Flex>
       <Routes>
-        {/* TODO need to update this path to check if have spotifyloggedin, if have show SpotifyNowPlaying
-        if dont have, redirect to spotifyAuth */}
         <Route path='/home' 
         element={user 
-        ? <SpotifyNowPlaying handleNotification={handleNotification} user={user} />
+        ? <SpotifyNowPlaying handleNotification={handleNotification} user={user} refresh_token={refreshToken} />
         : <Navigate to='/login'/>
         }
         />
@@ -139,21 +145,21 @@ const App = () => {
           ? <Navigate to='/home' />
           : <LoginForm handleNotification={handleNotification} handleLogin={handleLogin} />
         }/>
+        {/* bug, cannot refresh in spotifyAuth page */}
         <Route path="/spotifyAuth"
         element= {
-          (user && spotifyLoggedIn)
-          ? <Navigate to='/home'/>
-          : (user) 
-            ? <SpotifyAuthFlow handleNotification={handleNotification} handleRefreshToken={handleRefreshToken}/>
-            : <Navigate to='/login'/>
+          // (user) 
+          // ? (spotifyLoggedIn) 
+          //   ? <Navigate to='/home'/>
+          //   : <SpotifyAuthFlow handleNotification={handleNotification} handleRefreshToken={handleRefreshToken}/>
+          // : <Navigate to='/login'/>
+
+          <SpotifyAuthFlow user ={user} spotifyLoggedIn = {spotifyLoggedIn} handleNotification={handleNotification} handleRefreshToken={handleRefreshToken}/>
         }
 
         />
         <Route path="/" 
-        element={user
-          ? <Navigate to='/home' />
-          : <Navigate to="/login" /> 
-        }/>
+        element={<Navigate to='/home'/>}/>
       </Routes>
     </ChakraProvider>
     )

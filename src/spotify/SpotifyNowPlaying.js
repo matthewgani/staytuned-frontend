@@ -1,18 +1,30 @@
 import { useEffect, useState } from "react";
 import spotifyService from "../services/spotify";
 import SpotifyLogo from "./SpotifyLogo";
+import { useNavigate } from "react-router-dom";
+import { Button } from '@chakra-ui/react'
 
-const SpotifyNowPlaying = ({ handleNotification, user }) => {
+const SpotifyNowPlaying = ({ handleNotification, user, refresh_token }) => {
     const [loading, setLoading] = useState(true);
     const [result, setResult] = useState({});
+    const navigate = useNavigate()
+
+
+    const redirectToAuth = () => {
+        // set show dialog to false after testing is done
+        handleNotification('Redirecting to spotify auth!', 'info')
+        navigate('/spotifyAuth')
+    }
 
     useEffect(() => {
         try {
-            spotifyService.getNowPlayingItem()
-            .then((results) => { 
-                setResult(results)
-                setLoading(false)
-            })
+            if (refresh_token) {
+                spotifyService.getNowPlayingItem()
+                .then((results) => { 
+                    setResult(results)
+                    setLoading(false)
+                })
+            }
         }
         catch (exception) {
             console.log(exception)
@@ -23,7 +35,8 @@ const SpotifyNowPlaying = ({ handleNotification, user }) => {
     return (
         <div>
             {`Welcome ${user.name}!`}
-            {loading && <p>Connecting to spotify...</p>}
+            {!refresh_token && <div><Button onClick={redirectToAuth}>Login to spotify to use the app!</Button> </div>}
+            {(refresh_token && loading) && <p>Connecting to spotify...</p>}
             {(!loading && !result.isPlaying) && (
                 <div>
                     <SpotifyLogo />
