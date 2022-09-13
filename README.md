@@ -1,6 +1,20 @@
-# Getting Started with Create React App
+# StayTuned
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Description
+StayTuned is a Social and Music Information Web App. Users are required to connect to their Spotify accounts in order to access the main functionality of the app. After authorizing StayTuned to access their Spotify information, StayTuned utilizes the Spotify API to get the user's currently playing song. Comments made by other users and other data about the current song are pulled from other APIs like Last.fm to give the user more information about what they are listening to. These data can include Artist information, song awards, song ratings and more. 
+
+  
+StayTuned is currently being developed, you can visit [StayTuned-backend](https://github.com/matthewgani/staytuned-backend) to see how the backend is implemented. 
+
+StayTuned is built with the MERN stack and uses Chakra UI for styling. E2E testing will be done with Cypress and Jest is used for testing the backend.
+
+
+## Pictures of current features
+
+![Sign up page](public/assets/SignUpPage.png)
+![Log in page](public/assets/LogInPage.png)
+![Home page](public/assets/HomePage.png)
+![Spotify auth page](public/assets/SpotifyAuthPage.png)
 
 ## Available Scripts
 
@@ -39,32 +53,4 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

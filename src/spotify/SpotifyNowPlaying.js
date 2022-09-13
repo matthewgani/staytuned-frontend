@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import spotifyService from "../services/spotify";
 import SpotifyLogo from "./SpotifyLogo";
 import { useNavigate } from "react-router-dom";
-import { Button } from '@chakra-ui/react'
+import { Button, Image, Flex} from '@chakra-ui/react'
 
 const SpotifyNowPlaying = ({ handleNotification, user, refresh_token }) => {
     const [loading, setLoading] = useState(true);
@@ -35,6 +35,7 @@ const SpotifyNowPlaying = ({ handleNotification, user, refresh_token }) => {
     return (
         <div>
             {`Welcome ${user.name}!`}
+            <SpotifyLogo />
             {!refresh_token && <div><Button onClick={redirectToAuth}>Login to spotify to use the app!</Button> </div>}
             {(refresh_token && loading) && <p>Connecting to spotify...</p>}
             {(!loading && !result.isPlaying) && (
@@ -44,17 +45,16 @@ const SpotifyNowPlaying = ({ handleNotification, user, refresh_token }) => {
                 </div>
             )}
             {(!loading && result.isPlaying) && (
-                <div>
+                <Flex minWidth='max-content' direction='column' justify ='center' alignItems='center' gap='2'>
                     <div>
-                        <SpotifyLogo />
                         <span>Now playing</span>
                     </div>
                     <div>
-                        <img src={result.albumImageUrl} alt={`${result.title} album art`}/>
-                        <a href={result.songUrl} target="_blank" rel="noreferrer">{result.title}</a>
-                        <p>{result.artist}</p>
+                        <Image boxSize='300px' src={result.albumImageUrl} alt={`${result.title} album art`}/>
+                        <a href={result.songUrl} target="_blank" rel="noreferrer">Title: {result.title}</a>
+                        <p>Artists: {result.artist}</p>
                     </div>
-                </div>
+                </Flex>
             )}
         </div>
     )
